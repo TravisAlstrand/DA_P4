@@ -6,7 +6,7 @@ from modules.menu_functions import menu_start
 if __name__ == "__main__":
     # create db
     Base.metadata.create_all(engine)
-    # clean csvs / add to db
+    # clean CSVs / add to db
     add_csv_to_db()
     # start the app
     menu_start()
