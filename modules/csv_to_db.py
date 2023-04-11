@@ -1,8 +1,9 @@
-from modules import models
+from modules.models import session, Brand, Product
 import csv
 import datetime
 
 
+# open / read csv files and clean / add them to db
 def add_csv_to_db():
     with open("./starter_csvs/brands.csv") as csv_brands:
         brand_data = csv.reader(csv_brands)
@@ -10,13 +11,13 @@ def add_csv_to_db():
         next(brand_data)
         for row in brand_data:
             # check if brand is already in db
-            brand_already_in_db = models.session.query(models.Brand).\
-                filter(models.Brand.brand_name == row[0]).one_or_none()
+            brand_already_in_db = session.query(Brand). \
+                filter(Brand.brand_name == row[0]).one_or_none()
             if brand_already_in_db is None:
                 # if not in db, add it
-                name = models.Brand(brand_name=row[0])
-                models.session.add(name)
-                models.session.commit()
+                name = Brand(brand_name=row[0])
+                session.add(name)
+                session.commit()
             else:
                 pass
 
@@ -26,19 +27,19 @@ def add_csv_to_db():
         next(inv_data)
         for row in inv_data:
             # check in product is already in db
-            product_already_in_db = models.session.query(models.Product).\
-                filter(models.Product.product_name == row[0]).one_or_none()
+            product_already_in_db = session.query(Product). \
+                filter(Product.product_name == row[0]).one_or_none()
             if product_already_in_db is None:
                 # if not in db, add it
                 build_new_product(row)
             else:
                 # if in db, compare dates for newest
                 if product_already_in_db.date_updated < clean_csv_date(row[3]):
-                    models.session.delete(product_already_in_db)
+                    session.delete(product_already_in_db)
                     build_new_product(row)
                 else:
                     pass
-        models.session.commit()
+        session.commit()
 
 
 def build_new_product(row):
@@ -47,13 +48,13 @@ def build_new_product(row):
     price = clean_csv_price(row[1])
     quantity = clean_csv_quantity(row[2])
     date = clean_csv_date(row[3])
-    brand_id = models.session.query(models.Brand)\
-        .filter(models.Brand.brand_name == row[4]).first().brand_id
+    brand_id = session.query(Brand) \
+        .filter(Brand.brand_name == row[4]).first().brand_id
     # create / add product to db
-    new_product = models.Product(product_name=name, product_price=price,
-                                 product_quantity=quantity, date_updated=date,
-                                 brand_id=brand_id)
-    models.session.add(new_product)
+    new_product = Product(product_name=name, product_price=price,
+                          product_quantity=quantity, date_updated=date,
+                          brand_id=brand_id)
+    session.add(new_product)
 
 
 def clean_csv_price(string):
