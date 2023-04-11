@@ -1,4 +1,4 @@
-from models import Base, engine
+from modules.models import Base, engine
 
 
 if __name__ == "__main__":
