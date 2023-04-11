@@ -29,8 +29,8 @@ class Product(Base):
 
     product_id = Column(Integer, primary_key=True)
     product_name = Column(String)
-    product_quantity = Column(Integer)
     product_price = Column(Integer)
+    product_quantity = Column(Integer)
     date_updated = Column(Date)
     brand_id = Column(Integer, ForeignKey("brands.brand_id"))
     brand = relationship("Brand", back_populates="products")
