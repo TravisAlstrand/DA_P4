@@ -113,10 +113,10 @@ def edit_product(product):
             # check if product already exists
             product_already_in_db = session.query(Product). \
                 filter(Product.product_name == new_name).one_or_none()
-            if product_already_in_db is None:
+            if product_already_in_db is None or product_already_in_db == product:
                 break
             else:
-                print_error("A product already has that name")
+                print_error("Another product already has that name")
                 continue
         else:
             print_error("Name must contain at least one character")
