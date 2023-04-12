@@ -19,8 +19,8 @@ class Brand(Base):
 
     def __repr__(self):
         return f"""
-        \nBrand ID - {self.brand_id}\r
-        Brand name - {self.brand_name}
+        \nBrand ID - {self.brand_id}
+        \nBrand name - {self.brand_name}
         """
 
 
@@ -37,10 +37,10 @@ class Product(Base):
 
     def __repr__(self):
         return f"""
-        \nProduct ID - {self.product_id}\r
-        Brand ID - {self.brand_id}\r
-        Name - {self.product_name}\r
-        Quantity - {self.product_quantity}\r
-        Price - {self.product_price}\r
-        Date Updated - {self.date_updated}
+        \nProduct ID - {self.product_id}
+        \nBrand ID - {self.brand_id}
+        \nName - {self.product_name}
+        \nQuantity - {self.product_quantity}
+        \nPrice - {self.product_price}
+        \nDate Updated - {self.date_updated}
         """
