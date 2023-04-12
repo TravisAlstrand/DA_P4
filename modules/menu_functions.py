@@ -16,7 +16,7 @@ def menu_start():
     elif choice == "B":
         print("backup now!")
     elif choice == "Q":
-        print("peace out!")
+        print("\nThanks for stopping by!")
         quit()
 
 
@@ -36,13 +36,9 @@ def welcome_menu():
         if choice in ["V", "N", "A", "B", "Q"]:
             return choice
         else:
-            print_error()
-            print("""
-            \nPlease choose one of the following options...
+            print_error("""\nPlease choose one of the following options...
             \nV, N, A, B or Q.
-            \n...
-            """)
-            time.sleep(2)
+            \n...""")
 
 
 def view_product():
@@ -57,9 +53,7 @@ def view_product():
         try:
             id_selection = int(id_selection)
             if id_selection not in product_ids:
-                print_error()
-                print("\nSelection must be in the list")
-                time.sleep(2)
+                print_error("Selection must be in the list")
             else:
                 # if valid input, find product and display
                 searched_product = session.query(Product). \
@@ -78,9 +72,7 @@ def view_product():
                 time.sleep(4)
                 menu_start()
         except ValueError:
-            print_error()
-            print("\nSelection must be a whole number")
-            time.sleep(2)
+            print_error("Selection must be a whole number")
 
 
 def add_product():
@@ -94,9 +86,7 @@ def add_product():
             product.append(name)
             break
         else:
-            print_error()
-            print("Name must contain at least one character")
-            time.sleep(2)
+            print_error("Name must contain at least one character")
     # price
     while True:
         try:
@@ -105,9 +95,7 @@ def add_product():
             product.append(price)
             break
         except ValueError:
-            print_error()
-            print("\nPrice must be a whole number in cents")
-            time.sleep(2)
+            print_error("Price must be a whole number in cents")
     # quantity
     while True:
         try:
@@ -116,8 +104,7 @@ def add_product():
             product.append(quantity)
             break
         except ValueError:
-            print_error()
-            print("\nQuantity must be a whole number")
+            print_error("Quantity must be a whole number")
     # date
     date = datetime.date.today()
     product.append(date)
@@ -139,22 +126,42 @@ def add_product():
                 product.append(brand_selection)
                 break
         except ValueError:
-            print_error()
-            print("\nBrand Id must be a whole number")
-            time.sleep(2)
+            print_error("Brand Id must be a whole number")
         except Exception as e:
-            print_error()
-            print(e)
-            time.sleep(2)
+            print_error(e)
     build_new_product(product)
 
 
 def build_new_product(product):
     # create / add product to db
+    print(product)
     new_product = Product(product_name=product[0], product_price=product[1],
                           product_quantity=product[2], date_updated=product[3],
                           brand_id=product[4])
-    
+    # check if product already exists
+    product_already_in_db = session.query(Product). \
+        filter(Product.product_name == new_product.product_name).one_or_none()
+    if product_already_in_db is None:
+        session.add(new_product)
+        session.commit()
+        print(f"\nProduct '{new_product.product_name}' added!")
+        time.sleep(2)
+        menu_start()
+    else:
+        print(f"\nA product already exists with the name {new_product.product_name}")
+        while True:
+            edit_choice = input("Would you like to update it? (Y)/(N): ")
+            if edit_choice.upper() == "N":
+                print("\nOkie dokie!")
+                time.sleep(2)
+                menu_start()
+            elif edit_choice.upper() == "Y":
+                update_product(product_already_in_db, new_product)
+                print(f"\nProduct '{new_product.product_name}' updated!")
+                time.sleep(2)
+                menu_start()
+            else:
+                print_error("Please enter a (Y) or an (N)")
 
 
 def clean_user_price(string):
@@ -167,9 +174,22 @@ def unclean_date(date_object):
     return date_object.strftime("%m/%d/%Y")
 
 
-def print_error():
-    print("""
+def update_product(og_product, new_product):
+    og_product.product_name = new_product.product_name
+    og_product.product_price = new_product.product_price
+    og_product.product_quantity = new_product.product_quantity
+    og_product.date_updated = new_product.date_updated
+    og_product.brand_id = new_product.brand_id
+    session.commit()
+
+
+def print_error(error_message):
+    print(f"""
     \n>>>>>>>>>>>>>
     \n>>> ERROR >>>
     \n>>>>>>>>>>>>>
+    \n
+    \n{error_message}
+    \n
     """)
+    time.sleep(2)
