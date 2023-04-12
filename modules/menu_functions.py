@@ -1,4 +1,5 @@
 from modules.models import session, Product, Brand
+from modules.db_to_csv import backup_to_csv
 import datetime
 import time
 
@@ -14,7 +15,9 @@ def menu_start():
     elif choice == "A":
         print("analyze something")
     elif choice == "B":
-        print("backup now!")
+        print("\nCreating a backup file...")
+        backup_to_csv()
+        menu_start()
     elif choice == "Q":
         print("\nThanks for stopping by!")
         quit()

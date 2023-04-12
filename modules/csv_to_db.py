@@ -5,7 +5,7 @@ import datetime
 
 # open / read csv files and clean / add them to db
 def add_csv_to_db():
-    with open("./starter_csvs/brands.csv") as csv_brands:
+    with open("./csvs/brands.csv") as csv_brands:
         brand_data = csv.reader(csv_brands)
         # skip header line
         next(brand_data)
@@ -21,7 +21,7 @@ def add_csv_to_db():
             else:
                 pass
 
-    with open("./starter_csvs/inventory.csv") as csv_inventory:
+    with open("./csvs/inventory.csv") as csv_inventory:
         inv_data = csv.reader(csv_inventory)
         # skip header line
         next(inv_data)
