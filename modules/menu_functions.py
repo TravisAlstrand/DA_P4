@@ -1,5 +1,6 @@
 from modules.models import session, Product, Brand
 from modules.db_to_csv import backup_to_csv
+from sqlalchemy import func
 import datetime
 import time
 
@@ -13,7 +14,7 @@ def menu_start():
     elif choice == "N":
         add_product()
     elif choice == "A":
-        print("analyze something")
+        build_analysis()
     elif choice == "B":
         print("\nCreating a backup file...")
         backup_to_csv()
@@ -262,6 +263,29 @@ def build_new_product(product):
                 menu_start()
             else:
                 print_error("Please enter a (Y) or an (N)")
+
+
+def build_analysis():
+    print("\nBuilding an analysis...")
+    time.sleep(2)
+    most_expensive = session.query(Product).order_by(Product.product_price.desc()).first()
+    least_expensive = session.query(Product).order_by(Product.product_price.asc()).first()
+    most_products = session.query(Brand).join(Product).group_by(Brand.brand_id). \
+        order_by(func.count(Product.product_id).desc()).limit(1).first()
+    average = session.query(func.avg(Product.product_price)).scalar()
+    avg_price = "{:.2f}".format(average / 100)
+    oldest_product = session.query(Product).order_by(Product.date_updated.asc()).first()
+    newest_product = session.query(Product).order_by(Product.date_updated.desc()).first()
+    print(f"""
+        \n- Most expensive product: {most_expensive.product_name} - ${most_expensive.product_price / 100}
+        \n- Least expensive product: {least_expensive.product_name} - ${least_expensive.product_price / 100}
+        \n- Brand with most products: {most_products.brand_name} - {len(most_products.products)} products
+        \n- Average cost of all products: ${avg_price}
+        \n- Oldest product: {oldest_product.product_name} - {oldest_product.date_updated} (gross...)
+        \n- Newest product: {newest_product.product_name} - {newest_product.date_updated}
+        """)
+    time.sleep(2)
+    menu_start()
 
 
 def delete_product(prod_id):
