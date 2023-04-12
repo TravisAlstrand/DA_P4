@@ -2,4 +2,5 @@
 env/
 __pycache__/
 inventory.db
-backup.csv
+backup_brands.csv
+backup_inventory.csv
