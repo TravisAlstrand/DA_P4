@@ -23,7 +23,7 @@ def backup_to_csv():
             unclean_date = product.date_updated.strftime("%m/%d/%Y")
             if unclean_date[3] == "0":
                 unclean_date = unclean_date[:3] + unclean_date[4:]
-            if unclean_date[0] =="0":
+            if unclean_date[0] == "0":
                 unclean_date = unclean_date[1:]
             brand_to_add = session.query(Brand). \
                 filter(Brand.brand_id == product.brand_id).first().brand_name
